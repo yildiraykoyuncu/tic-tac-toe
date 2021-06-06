@@ -1,20 +1,23 @@
-const WINNING_COMBINATIONS = [
-    [0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]
-]
 
-const boxes = document.querySelectorAll("[data-box]")
-const board = document.querySelector("#board")
 const winningMessageDiv = document.querySelector("#winning-message")
 const winningMessageText = document.querySelector("#winning-message-text")
 const restartButton = document.querySelector("#restartButton")
+const containor = document.querySelector(".containor")
 let circleTurn
+let board
+let boxes
+let box
 
+const width = 6
+const height = 5
 
+setBoard(width, height)
 startGame()
 
 restartButton.addEventListener("click", startGame)
 
 function startGame(){
+    boxes = document.querySelectorAll(".box")
     circleTurn = false
     boxes.forEach(box=>{
         box.classList.remove('x')
@@ -26,6 +29,20 @@ function startGame(){
     winningMessageDiv.classList.remove('show')
 }
 
+function setBoard(width, height, numPlayer){
+    board = document.createElement('div')
+    board.classList.add('board')
+    board.style.gridTemplateColumns = `repeat(${width}, auto)`
+    const numberBoxes = width*height
+    for(let i =0; i< numberBoxes; i++){
+        box = document.createElement('div')
+        box.classList.add('box')
+        board.appendChild(box)
+    }
+
+    containor.appendChild(board)
+}
+
 
 
 function handleClick(event){
@@ -33,8 +50,8 @@ function handleClick(event){
     const currentClass = circleTurn ? "circle" : "x"
 
     placeMark(box, currentClass)
-
-    if(checkWin(currentClass)){
+   console.log( checkWin(box, currentClass))
+    if(checkWin(box, currentClass)){
         endGame(false)
     } else if(isDraw()){
         endGame(true)
@@ -63,12 +80,48 @@ function setBoardHoverClass(){
     }
 }
 
-function checkWin(currentClass){
-    return WINNING_COMBINATIONS.some(combination => {
-        return combination.every(index => {
-            return boxes[index].classList.contains(currentClass)
-        })
-    })
+function checkWin(box, currentClass){
+    const currentIndex = [...boxes].indexOf(box)
+    console.log(currentIndex)
+
+    //check horizontal conditions
+    if(boxes[currentIndex + 1]?.classList.contains(currentClass) && boxes[currentIndex + 2]?.classList.contains(currentClass) ){
+        return true
+    }
+    if(boxes[currentIndex - 1]?.classList.contains(currentClass) && boxes[currentIndex - 2]?.classList.contains(currentClass) ){
+        return true
+    }
+    if(boxes[currentIndex - 1]?.classList.contains(currentClass) && boxes[currentIndex + 1]?.classList.contains(currentClass) ){
+        return true
+    }
+
+    //check vertical conditions
+
+    if(boxes[currentIndex + width]?.classList.contains(currentClass) && boxes[currentIndex + width * 2]?.classList.contains(currentClass) ){
+        return true
+    }
+
+    if(boxes[currentIndex - width]?.classList.contains(currentClass) && boxes[currentIndex - width * 2]?.classList.contains(currentClass) ){
+        return true
+    }
+
+    if(boxes[currentIndex - width]?.classList.contains(currentClass) && boxes[currentIndex + width]?.classList.contains(currentClass) ){
+        return true
+    }
+
+    // check diognal conditions
+
+    if(boxes[currentIndex + width + 1]?.classList.contains(currentClass) && boxes[currentIndex + width * 2 + 2]?.classList.contains(currentClass) ){
+        return true
+    }
+
+    if(boxes[currentIndex - width - 1]?.classList.contains(currentClass) && boxes[currentIndex - width * 2 - 2]?.classList.contains(currentClass) ){
+        return true
+    }
+
+    if(boxes[currentIndex + width + 1]?.classList.contains(currentClass) && boxes[currentIndex - width - 1]?.classList.contains(currentClass) ){
+        return true
+    }
 }
 
 function isDraw(){
