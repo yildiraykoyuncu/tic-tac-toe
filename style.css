@@ -41,6 +41,7 @@ body {
   align-items: center;
   position: relative;
   cursor: pointer;
+  font-size: 35px;
 }
 
 .box.x,
@@ -48,19 +49,19 @@ body {
     cursor: not-allowed;
 }
 
-.box.x::before,
+/* .box.x::before,
 .box.x::after,
 .box.circle::before{
     background-color: black;
-}
+} */
 
-.board.x .box:not(.x):not(.circle):hover::before,
+/* .board.x .box:not(.x):not(.circle):hover::before,
 .board.x .box:not(.x):not(.circle):hover::after,
 .board.circle .box:not(.x):not(.circle):hover::before {
     background-color: lightblue;
-}
+} */
 
-.box.x::before,
+/* .box.x::before,
 .box.x::after,
 .board.x .box:not(.x):not(.circle):hover::before,
 .board.x .box:not(.x):not(.circle):hover::after {
@@ -68,9 +69,9 @@ body {
     width: calc(var(--mark-size) * .15);
     height: var(--mark-size);
     position: absolute;
-}
+} */
 
-.box.x::before,
+/* .box.x::before,
 .board.x .box:not(.x):not(.circle):hover::before {
     transform: rotate(45deg);
 }
@@ -78,18 +79,18 @@ body {
 .box.x::after,
 .board.x .box:not(.x):not(.circle):hover::after {
     transform: rotate(-45deg);
-}
+} */
 
-.box.circle::before,
+/* .box.circle::before,
 .box.circle::after,
 .board.circle .box:not(.x):not(.circle):hover::before,
 .board.circle .box:not(.x):not(.circle):hover::after {
     content: '';
     position: absolute;
     border-radius: 50%;
-}
+} */
 
-.box.circle::before,
+/* .box.circle::before,
 .board.circle .box:not(.x):not(.circle):hover::before {
     width: var(--mark-size);
     height: var(--mark-size);
@@ -101,7 +102,7 @@ body {
     width: calc(var(--mark-size) * .75);
     height: calc(var(--mark-size) * .75);
     background-color: white;
-}
+} */
 
 .winning-message {
     position: fixed;

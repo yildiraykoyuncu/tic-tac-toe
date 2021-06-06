@@ -1,141 +1,203 @@
+const winningMessageDiv = document.querySelector("#winning-message");
+const winningMessageText = document.querySelector("#winning-message-text");
+const restartButton = document.querySelector("#restartButton");
+const containor = document.querySelector(".containor");
+const turn = document.querySelector("#turn");
 
-const winningMessageDiv = document.querySelector("#winning-message")
-const winningMessageText = document.querySelector("#winning-message-text")
-const restartButton = document.querySelector("#restartButton")
-const containor = document.querySelector(".containor")
-let circleTurn
-let board
-let boxes
-let box
+let board;
+let boxes;
+let box;
 
-const width = 6
-const height = 5
+let counter = 0;
+const players = [];
+let currentPlayer;
 
-setBoard(width, height)
-startGame()
+const width = 6;
+const height = 5;
+const numPlayers = 3;
 
-restartButton.addEventListener("click", startGame)
+setPlayers(numPlayers);
+setBoard(width, height);
+startGame();
 
-function startGame(){
-    boxes = document.querySelectorAll(".box")
-    circleTurn = false
-    boxes.forEach(box=>{
-        box.classList.remove('x')
-        box.classList.remove('circle')
-        box.addEventListener("click", handleClick, { once: true })
-    })
+restartButton.addEventListener("click", startGame);
 
-    setBoardHoverClass()
-    winningMessageDiv.classList.remove('show')
+function startGame() {
+  boxes = document.querySelectorAll(".box");
+  boxes.forEach((box) => {
+    box.className = "box";
+    box.innerText = "";
+    box.addEventListener("click", handleClick, { once: true });
+  });
+
+  // setBoardHoverClass()
+  winningMessageDiv.classList.remove("show");
+  currentPlayer = players[0];
+  turn.innerText = `${currentPlayer}'s turn`;
 }
 
-function setBoard(width, height, numPlayer){
-    board = document.createElement('div')
-    board.classList.add('board')
-    board.style.gridTemplateColumns = `repeat(${width}, auto)`
-    const numberBoxes = width*height
-    for(let i =0; i< numberBoxes; i++){
-        box = document.createElement('div')
-        box.classList.add('box')
-        board.appendChild(box)
-    }
+function setBoard(width, height) {
+  board = document.createElement("div");
+  board.classList.add("board");
+  board.style.gridTemplateColumns = `repeat(${width}, auto)`;
+  const numberBoxes = width * height;
+  for (let i = 0; i < numberBoxes; i++) {
+    box = document.createElement("div");
+    box.classList.add("box");
+    board.appendChild(box);
+  }
 
-    containor.appendChild(board)
+  containor.appendChild(board);
 }
 
-
-
-function handleClick(event){
-    const box = event.target
-    const currentClass = circleTurn ? "circle" : "x"
-
-    placeMark(box, currentClass)
-   console.log( checkWin(box, currentClass))
-    if(checkWin(box, currentClass)){
-        endGame(false)
-    } else if(isDraw()){
-        endGame(true)
-    } else {
-        switchTurns()
-        setBoardHoverClass()
-    }   
+function setPlayers(numPlayers) {
+  for (let i = 0; i < numPlayers; i++) {
+    players.push(`P${i + 1}`);
+  }
+  currentPlayer = players[0];
+  turn.innerText = `${currentPlayer}'s turn`;
 }
 
-function placeMark(box, currentClass){
-    box.classList.add(currentClass)
+function handleClick(event) {
+  const box = event.target;
+
+  placeMark(box);
+
+  if (checkWin(box)) {
+    endGame(false);
+  } else if (isDraw()) {
+    endGame(true);
+  } else {
+    switchTurns();
+    // setBoardHoverClass()
+  }
 }
 
-function switchTurns(){
-    circleTurn = !circleTurn
+function placeMark(box) {
+  box.innerText = currentPlayer;
+  box.classList.add(currentPlayer);
 }
 
-function setBoardHoverClass(){
-    board.classList.remove("x")
-    board.classList.remove("circle")
-
-    if(circleTurn){
-        board.classList.add("circle")
-    } else{
-        board.classList.add("x")
-    }
+function switchTurns() {
+  counter++;
+  currentPlayer = players[counter % players.length];
+  turn.innerText = `${currentPlayer}'s turn`;
 }
 
-function checkWin(box, currentClass){
-    const currentIndex = [...boxes].indexOf(box)
-    console.log(currentIndex)
+// function setBoardHoverClass(){
+//     board.classList.remove("x")
+//     board.classList.remove("circle")
 
-    //check horizontal conditions
-    if(boxes[currentIndex + 1]?.classList.contains(currentClass) && boxes[currentIndex + 2]?.classList.contains(currentClass) ){
-        return true
-    }
-    if(boxes[currentIndex - 1]?.classList.contains(currentClass) && boxes[currentIndex - 2]?.classList.contains(currentClass) ){
-        return true
-    }
-    if(boxes[currentIndex - 1]?.classList.contains(currentClass) && boxes[currentIndex + 1]?.classList.contains(currentClass) ){
-        return true
-    }
+//     if(circleTurn){
+//         board.classList.add("circle")
+//     } else{
+//         board.classList.add("x")
+//     }
+// }
 
-    //check vertical conditions
+function checkWin(box) {
+  const currentIndex = [...boxes].indexOf(box);
 
-    if(boxes[currentIndex + width]?.classList.contains(currentClass) && boxes[currentIndex + width * 2]?.classList.contains(currentClass) ){
-        return true
-    }
+  //check horizontal conditions
+  if (
+    boxes[currentIndex + 1]?.classList.contains(currentPlayer) &&
+    boxes[currentIndex + 2]?.classList.contains(currentPlayer)
+  ) {
+    return true;
+  }
+  if (
+    boxes[currentIndex - 1]?.classList.contains(currentPlayer) &&
+    boxes[currentIndex - 2]?.classList.contains(currentPlayer)
+  ) {
+    return true;
+  }
+  if (
+    boxes[currentIndex - 1]?.classList.contains(currentPlayer) &&
+    boxes[currentIndex + 1]?.classList.contains(currentPlayer)
+  ) {
+    return true;
+  }
 
-    if(boxes[currentIndex - width]?.classList.contains(currentClass) && boxes[currentIndex - width * 2]?.classList.contains(currentClass) ){
-        return true
-    }
+  //check vertical conditions
 
-    if(boxes[currentIndex - width]?.classList.contains(currentClass) && boxes[currentIndex + width]?.classList.contains(currentClass) ){
-        return true
-    }
+  if (
+    boxes[currentIndex + width]?.classList.contains(currentPlayer) &&
+    boxes[currentIndex + width * 2]?.classList.contains(currentPlayer)
+  ) {
+    return true;
+  }
 
-    // check diognal conditions
+  if (
+    boxes[currentIndex - width]?.classList.contains(currentPlayer) &&
+    boxes[currentIndex - width * 2]?.classList.contains(currentPlayer)
+  ) {
+    return true;
+  }
 
-    if(boxes[currentIndex + width + 1]?.classList.contains(currentClass) && boxes[currentIndex + width * 2 + 2]?.classList.contains(currentClass) ){
-        return true
-    }
+  if (
+    boxes[currentIndex - width]?.classList.contains(currentPlayer) &&
+    boxes[currentIndex + width]?.classList.contains(currentPlayer)
+  ) {
+    return true;
+  }
 
-    if(boxes[currentIndex - width - 1]?.classList.contains(currentClass) && boxes[currentIndex - width * 2 - 2]?.classList.contains(currentClass) ){
-        return true
-    }
+  // check diognal conditions
 
-    if(boxes[currentIndex + width + 1]?.classList.contains(currentClass) && boxes[currentIndex - width - 1]?.classList.contains(currentClass) ){
-        return true
-    }
+  if (
+    boxes[currentIndex + width + 1]?.classList.contains(currentPlayer) &&
+    boxes[currentIndex + width * 2 + 2]?.classList.contains(currentPlayer)
+  ) {
+    return true;
+  }
+
+  if (
+    boxes[currentIndex - width - 1]?.classList.contains(currentPlayer) &&
+    boxes[currentIndex - width * 2 - 2]?.classList.contains(currentPlayer)
+  ) {
+    return true;
+  }
+
+  if (
+    boxes[currentIndex + width + 1]?.classList.contains(currentPlayer) &&
+    boxes[currentIndex - width - 1]?.classList.contains(currentPlayer)
+  ) {
+    return true;
+  }
+
+  if (
+    boxes[currentIndex + width - 1]?.classList.contains(currentPlayer) &&
+    boxes[currentIndex + width * 2 - 2]?.classList.contains(currentPlayer)
+  ) {
+    return true;
+  }
+
+  if (
+    boxes[currentIndex - width + 1]?.classList.contains(currentPlayer) &&
+    boxes[currentIndex - width * 2 + 2]?.classList.contains(currentPlayer)
+  ) {
+    return true;
+  }
+
+  if (
+    boxes[currentIndex - width + 1]?.classList.contains(currentPlayer) &&
+    boxes[currentIndex + width - 1]?.classList.contains(currentPlayer)
+  ) {
+    return true;
+  }
 }
 
-function isDraw(){
-    return [...boxes].every(box=>{
-        return box.classList.contains("x") || box.classList.contains("circle")
-    })
+function isDraw() {
+  return [...boxes].every((box) => {
+    return box.classList.length > 1;
+  });
 }
 
-function endGame(draw){
-    if(draw){
-        winningMessageText.innerText = "Draw"
-    } else {
-        winningMessageText.innerText = `${circleTurn ? "O's" : "X's"} Wins!`
-    }
+function endGame(draw) {
+  if (draw) {
+    winningMessageText.innerText = "Draw";
+  } else {
+    winningMessageText.innerText = `${currentPlayer} Wins!`;
+  }
 
-    winningMessageDiv.classList.add("show")
+  winningMessageDiv.classList.add("show");
 }
